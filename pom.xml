@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.aron.learn</groupId> <!--learn是一项大工程， helloworld是其中的一子项-->
+    <artifactId>learn-helloworld</artifactId>
+    <version>1.0</version>
+    <name>Aron Learn - HelloWorld</name>
+    <packaging>jar</packaging>
+
+
+    <properties>
+        <scala.version>2.11.7</scala.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+
+    <!--远程仓库 配置，若它们需要密码，在setting.xml文件server 标签配置-->
+    <repositories>
+        <repository>
+            <id>central</id>
+            <name>Central Repository</name>
+            <url>https://repo.maven.apache.org/maven2</url>
+            <layout>default</layout>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>daily</updatePolicy>
+                <checksumPolicy>ignore</checksumPolicy>
+            </snapshots>
+
+        </repository>
+
+        <repository>
+            <id>jboss</id>
+            <name>JBoss Repository</name>
+            <url>http://repository.jboss.com/maven2</url>
+            <layout>default</layout>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+    
+    <dependencies>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+            <scope>compile</scope><!--默认compile(编译测试运行有效)，还有test(测试有效),provided(编译测试有效),runtime(测试运行有效),system(编译测试有效，需指定路径) -->
+            <type>jar</type>
+            <!--<optional>true</optional> 可选依赖不会被传递-->
+        </dependency>
+
+        <!--system scope引入的包，在使用jar-with-dependencies打包时将不会被包含，可以使用resources将本地包打进jar-with-dependencies-->
+        <dependency>
+            <groupId>cn.itcast</groupId>
+            <artifactId>itcast-tools</artifactId>
+            <version>1.4.2</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/itcast-tools-1.4.2.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <scope>compile</scope>
+            <version>1.9.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.31</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.scalatest</groupId>
+            <artifactId>scalatest_2.9.1</artifactId>
+            <version>2.0.M6-SNAP22</version>
+            <scope>test</scope>
+        </dependency>
+
+        
+    </dependencies>
+    <!--各个生命周期的phase-->
+    <!--clean生命周期:pre-clean, clean, post-clean-->
+    <!--default生命周期:validate, initialize, generate-sources, process-sources, generate-resources, process-resources,
+                       compile, process-classes, generate-test-sources, process-test-sources, generate-test-resources,
+                       process-test-resources, test-compile, process-test-classes, test, prepare-package, package,
+                       pre-integration-test, integration-test, post-integration-test, verify, install, deploy-->
+    <!--site生命周期:pre-site, site, post-site, site-deploy-->
+
+    <build>
+        <finalName>${project.artifactId}-${project.version}</finalName>
+        <directory>${basedir}/target</directory>
+        <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
+        <scriptSourceDirectory>${basedir}/src/main/scripts</scriptSourceDirectory>
+        <testSourceDirectory>${basedir}/src/test/java</testSourceDirectory>
+        <outputDirectory>${basedir}/target/classes</outputDirectory>
+        <testOutputDirectory>${basedir}/target/test-classes</testOutputDirectory>
+
+        <!--
+        <resources>
+            <resource>
+                <directory>lib</directory>
+                <targetPath>lib</targetPath>
+                <includes>
+                    <include>**/*.jar</include>
+                </includes>
+            </resource>
+        </resources>
+
+-->
+
+        <plugins>
+            <!--goals(插件:目标)                         phase:(生命周期:阶段(jar包))-->
+            <!--maven-clean-plugin:clean               clean:clean-->
+            <!--maven-resources-plugin:resources       default:process-resources-->
+            <!--maven-resources-plugin:testResources   default:process-test-resources-->
+            <!--maven-compiler-plugin:compile          default:compile-->
+            <!--maven-compiler-plugin:testCompile      default:test-->
+            <!--maven-surefire-plugin:test             default:test-->
+            <!--maven-jar-plugin:jar                   default:package-->
+            <!--maven-install-plugin:install           default:install-->
+            <!--maven-deploy-plugin:deploy             site:deploy-->
+
+            <!--很多插件的目标都有默认绑定的phase(生命周期阶段)-->
+
+<!--*******************************编译插件*************************************************************-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <compilerArguments> <!--编译找lib目录，在dependency里可不配置该依赖-->
+                        <extdirs>${project.basedir}/lib</extdirs>
+                    </compilerArguments>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.scala-tools</groupId>
+                <artifactId>maven-scala-plugin</artifactId>
+                <version>2.15.2</version>
+                <configuration>
+                    <scalaVersion>${scala.version}</scalaVersion>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>scala-compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin> <!-- 生成源码,jar-no-fork是固定生成源码的目标 -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.0.1</version>
+                <executions>
+                    <execution>
+                        <id>gen-sources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+
+
+            </plugin>
+
+<!--****************************测试插件*****************************************************-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.19.1</version>
+                <configuration>
+                    <!--**匹配任意路径
+                    <includes>
+                        <include>**/*Tests.java</include>
+                    </includes>
+                    -->
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.scalatest</groupId>
+                <artifactId>scalatest-maven-plugin</artifactId>
+                <version>1.0</version>
+                <configuration>
+                    <skipTests>true</skipTests>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>test</id>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+<!--*******************************打包插件**************************************************************************-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.0.2</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries> <!--manifest.mf添加，键值对。lib下的jar包写入manifest.mf文件-->
+                            <Class-Path>lib/itcast-tools-1.4.2.jar lib/Demo-1.0-SNAPSHOT.jar</Class-Path>
+                        </manifestEntries>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib</classpathPrefix>
+                            <mainClass>com.aron.learn.HelloWorld</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <!-- 4个内置的descriptorRef
+                           format
+    bin                    tar.gz tar.bz2 zip
+    jar-with-dependencies  jar
+    src                    tar.gz tar.bz2 zip
+    project                tar.gz tar.bz2 zip
+    -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.0.0</version>
+
+                <configuration>
+                    <appendAssemblyId>true</appendAssemblyId> <!--文件名字加不加id-->
+                    <!--<descriptorRefs>-->
+                        <!--<descriptorRef>bin</descriptorRef> -->
+                    <!--</descriptorRefs>-->
+                    <descriptors>
+                        <descriptor>${project.basedir}\src\assembly\distribution.xml</descriptor>
+                    </descriptors>
+
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>pack-tar-gz</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+
+                </executions>
+
+            </plugin>
+
+        </plugins>
+
+
+
+    </build>
+
+    <!-- 将项目部署deploy到仓库中，默认只install到本地仓库中 ,需要认证时要在setting.xml配置该id的server-->
+    <!--
+    <distributionManagement>
+    	<repository>
+    		<id>proj-relesses</id>
+    		<name>Proj Releases Repository</name>
+    		<url>http://192.168.1.100/content/repositories/releases</url>
+    	</repository>
+    	<snapshotRepository></snapshotRepository>
+    </distributionManagement>
+     -->
+    <!--<profiles>-->
+        <!--<profile>-->
+            <!--<id>sample</id>-->
+            <!--<properties>-->
+                <!--<db.name></db.name>-->
+            <!--</properties>-->
+        <!--</profile>-->
+    <!--</profiles>-->
+
+</project>
