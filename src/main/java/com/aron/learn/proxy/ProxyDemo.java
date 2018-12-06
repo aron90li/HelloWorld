@@ -6,7 +6,6 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
-
 /**
  * Created by Aron on 2017/10/13.
  */
@@ -27,9 +26,6 @@ public class ProxyDemo {
         a.a();
         b.b();
     }
-
-
-
 }
 
 interface A {
@@ -46,5 +42,3 @@ class myInvocationHandler implements InvocationHandler {
         return null;
     }
 }
-
-

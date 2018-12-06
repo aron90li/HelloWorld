@@ -29,12 +29,9 @@ public class ProxyFactory {
                 }
                 return result;
             }
-
         };
         return Proxy.newProxyInstance(classLoader, interfaces, invocationHandler);
-
     }
-
 
     public Object getTargetObject() {
         return targetObject;
